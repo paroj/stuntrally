@@ -1,0 +1,78 @@
+name: stuntrally
+version: "2.6.1"
+confinement: strict
+summary: Stunt Rally
+base: core18
+description: |
+    Stunt Rally is a racing game with rally style of driving, mostly on gravel.
+    It features a rich variety of 172 tracks in 34 sceneries also on other planets.
+    The Track Editor allows creating and modifying tracks. It uses a 3D spline generated road.
+
+apps:
+    stuntrally:
+        command: desktop-launch $SNAP/usr/bin/stuntrally
+        plugs: [opengl, x11, pulseaudio, network, joystick]
+        desktop: usr/share/applications/stuntrally.desktop
+        environment:
+            OGRE_PLUGIN_DIR: $SNAP/usr/lib/x86_64-linux-gnu/OGRE-1.9.0/
+    editor:
+        command: desktop-launch $SNAP/usr/bin/sr-editor
+        plugs: [opengl, x11, home]
+        desktop: usr/share/applications/sr-editor.desktop
+        environment:
+            OGRE_PLUGIN_DIR: $SNAP/usr/lib/x86_64-linux-gnu/OGRE-1.9.0/
+    masterserver:
+        command: usr/bin/sr-masterserver
+        plugs: [network, network-bind]
+parts:
+    desktop-glib-only:
+        source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+        source-subdir: glib-only
+        plugin: make
+    stuntrally:
+        plugin: cmake
+        source: https://github.com/paroj/stuntrally.git
+        source-tag: master
+        source-depth: 1
+        override-pull: |
+            snapcraftctl pull
+            sed -i -e 's|Icon=stuntrally|Icon=/usr/share/icons/hicolor/64x64/apps/stuntrally.png|g' dist/stuntrally.desktop
+            sed -i -e 's|Icon=sr-editor|Icon=/usr/share/icons/hicolor/64x64/apps/sr-editor.png|g' dist/sr-editor.desktop
+            cd data
+            git clone --depth=1 https://github.com/stuntrally/tracks.git
+        configflags:
+            - -DCMAKE_BUILD_TYPE=Release
+            - -DCMAKE_INSTALL_PREFIX=/usr/
+            - -DBUILD_MASTER_SERVER=ON
+        build-packages:
+            - libboost-wave-dev
+            - libboost-system-dev
+            - libboost-filesystem-dev
+            - libboost-thread-dev
+            - libbullet-dev
+            - libbullet-extras-dev
+            - libopenal-dev
+            - libenet-dev
+            - libvorbisfile3
+            - libogg-dev
+            - libvorbis-dev
+            - libogre-1.9-dev
+            - libmygui-dev
+            - libsdl2-dev
+        stage-packages:
+            - libboost-wave1.65.1
+            - libboost-system1.65.1
+            - libboost-filesystem1.65.1
+            - libboost-thread1.65.1
+            - libbullet2.87
+            - libbullet-extras2.87
+            - libopenal1
+            - libenet7
+            - libvorbisfile3
+            - libogg0
+            - libvorbis0a
+            - libogre-1.9.0v5
+            - libmyguiengine3debian1v5
+            - libmygui.ogreplatform0debian1v5
+            - libsdl2-2.0-0
+        after: [desktop-glib-only]
