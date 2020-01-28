@@ -1,0 +1,138 @@
+name: stuntrally
+version: "2.8"
+confinement: strict
+summary: Stunt Rally
+base: core22
+description: |
+    Stunt Rally is a racing game with rally style of driving, mostly on gravel.
+    It features a rich variety of 172 tracks in 34 sceneries also on other planets.
+    The Track Editor allows creating and modifying tracks. It uses a 3D spline generated road.
+
+apps:
+    stuntrally:
+        command: bin/desktop-launch $SNAP/usr/bin/stuntrally
+        plugs: [opengl, x11, pulseaudio, network, joystick]
+        desktop: usr/share/applications/stuntrally.desktop
+        environment:
+            OGRE_PLUGIN_DIR: $SNAP/usr/lib/OGRE/
+    editor:
+        command: bin/desktop-launch $SNAP/usr/bin/sr-editor
+        plugs: [opengl, x11, home]
+        desktop: usr/share/applications/sr-editor.desktop
+        environment:
+            OGRE_PLUGIN_DIR: $SNAP/usr/lib/OGRE/
+    masterserver:
+        command: usr/bin/sr-masterserver
+        plugs: [network, network-bind]
+parts:
+    desktop-glib-only:
+        source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+        source-subdir: glib-only
+        plugin: make
+    ogre:
+        plugin: cmake
+        cmake-parameters:
+            - -DCMAKE_BUILD_TYPE=Release
+            - -DOGRE_STATIC=FALSE
+            - -DOGRE_BUILD_DEPENDENCIES=FALSE
+            - -DOGRE_BUILD_RENDERSYSTEM_GL=TRUE
+            - -DOGRE_RESOURCEMANAGER_STRICT=0
+            - -DOGRE_NODELESS_POSITIONING=TRUE
+            - -DOGRE_ENABLE_PRECOMPILED_HEADERS=FALSE
+            # stuff we dont need
+            - -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=FALSE
+            - -DOGRE_BUILD_RENDERSYSTEM_GLES2=FALSE
+            - -DOGRE_BUILD_TOOLS=FALSE
+            - -DOGRE_BUILD_SAMPLES=FALSE
+            - -DOGRE_INSTALL_SAMPLES=FALSE
+            - -DOGRE_BUILD_PLUGIN_EXRCODEC=FALSE
+            - -DOGRE_BUILD_PLUGIN_STBI=FALSE
+            - -DOGRE_BUILD_PLUGIN_BSP=FALSE
+            - -DOGRE_BUILD_PLUGIN_PCZ=FALSE
+            - -DOGRE_BUILD_PLUGIN_DOT_SCENE=FALSE
+            - -DOGRE_BUILD_PLUGIN_ASSIMP=FALSE
+            - -DOGRE_BUILD_COMPONENT_MESHLODGENERATOR=FALSE
+            - -DOGRE_BUILD_COMPONENT_JAVA=FALSE
+            - -DOGRE_BUILD_COMPONENT_VOLUME=FALSE
+            - -DOGRE_BUILD_COMPONENT_PROPERTY=FALSE
+            - -DCMAKE_INSTALL_PREFIX=/usr/
+        source: https://github.com/OGRECave/ogre.git
+        source-tag: v13.6.5
+        source-depth: 1
+        build-packages:
+            - libxrandr-dev
+            - libfreetype6-dev
+            - libxt-dev
+            - libgl1-mesa-dev
+            - libglu1-mesa-dev
+            - libfreeimage-dev
+            - g++
+        stage-packages:
+            - libfreetype6
+            - libgl1
+            - libxrandr2
+            - libegl1
+            - libfreeimage3
+    mygui:
+        plugin: cmake
+        cmake-parameters:
+            - -DCMAKE_BUILD_TYPE=Release
+            - -DCMAKE_INSTALL_PREFIX=/usr/
+            - -DCMAKE_CXX_FLAGS=-std=c++11
+            - -DMYGUI_BUILD_DEMOS=FALSE
+            - -DMYGUI_BUILD_TOOLS=FALSE
+            - -DMYGUI_BUILD_PLUGINS=FALSE
+        source: https://github.com/MyGUI/mygui.git
+        source-tag: MyGUI3.4.0
+        source-depth: 1
+        build-packages:
+          - libfreetype6-dev
+        stage-packages:
+          - libfreetype6
+        after: [ogre]
+    stuntrally:
+        plugin: cmake
+        source: https://github.com/stuntrally/stuntrally.git
+        source-tag: master
+        source-depth: 1
+        override-pull: |
+            snapcraftctl pull
+            sed -i -e 's|Icon=stuntrally|Icon=${SNAP}/usr/share/icons/hicolor/512x512/apps/stuntrally.png|g' dist/stuntrally.desktop
+            sed -i -e 's|Icon=sr-editor|Icon=${SNAP}/usr/share/icons/hicolor/512x512/apps/sr-editor.png|g' dist/sr-editor.desktop
+        cmake-parameters:
+            - -DCMAKE_BUILD_TYPE=Release
+            - -DCMAKE_INSTALL_PREFIX=/usr/
+            - -DBUILD_MASTER_SERVER=ON
+        build-environment:
+            - CMAKE_PREFIX_PATH: $SNAPCRAFT_STAGE/usr
+        build-packages:
+            - libboost-wave-dev
+            - libboost-system-dev
+            - libboost-filesystem-dev
+            - libboost-thread-dev
+            - libbullet-dev
+            - libbullet-extras-dev
+            - libopenal-dev
+            - libenet-dev
+            - libvorbisfile3
+            - libogg-dev
+            - libvorbis-dev
+            - libsdl2-dev
+            - libtinyxml-dev
+            - libtinyxml2-dev
+        stage-packages:
+            - libboost-wave1.74.0
+            - libboost-system1.74.0
+            - libboost-filesystem1.74.0
+            - libboost-thread1.74.0
+            - libbullet3.06
+            - libbullet-extras3.06
+            - libopenal1
+            - libenet7
+            - libvorbisfile3
+            - libogg0
+            - libvorbis0a
+            - libsdl2-2.0-0
+            - libtinyxml2.6.2v5
+            - libtinyxml2-9
+        after: [desktop-glib-only, mygui, ogre]
