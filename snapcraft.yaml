@@ -1,5 +1,5 @@
 name: stuntrally
-version: "2.6.1"
+version: "2.6.1+ogre1.12"
 confinement: strict
 summary: Stunt Rally
 base: core18
@@ -14,13 +14,13 @@ apps:
         plugs: [opengl, x11, pulseaudio, network, joystick]
         desktop: usr/share/applications/stuntrally.desktop
         environment:
-            OGRE_PLUGIN_DIR: $SNAP/usr/lib/x86_64-linux-gnu/OGRE-1.9.0/
+            OGRE_PLUGIN_DIR: $SNAP/usr/lib/OGRE/
     editor:
         command: desktop-launch $SNAP/usr/bin/sr-editor
         plugs: [opengl, x11, home]
         desktop: usr/share/applications/sr-editor.desktop
         environment:
-            OGRE_PLUGIN_DIR: $SNAP/usr/lib/x86_64-linux-gnu/OGRE-1.9.0/
+            OGRE_PLUGIN_DIR: $SNAP/usr/lib/OGRE/
     masterserver:
         command: usr/bin/sr-masterserver
         plugs: [network, network-bind]
@@ -29,10 +29,69 @@ parts:
         source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
         source-subdir: glib-only
         plugin: make
+    ogre:
+        plugin: cmake
+        configflags:
+            - -DCMAKE_BUILD_TYPE=Release
+            - -DOGRE_STATIC=FALSE
+            - -DOGRE_BUILD_DEPENDENCIES=FALSE
+            - -DOGRE_BUILD_RENDERSYSTEM_GL=TRUE
+            - -DOGRE_RESOURCEMANAGER_STRICT=0
+            # stuff we dont need
+            - -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=FALSE
+            - -DOGRE_BUILD_RENDERSYSTEM_GLES2=FALSE
+            - -DOGRE_BUILD_TOOLS=FALSE
+            - -DOGRE_BUILD_SAMPLES=FALSE
+            - -DOGRE_INSTALL_SAMPLES=FALSE
+            - -DOGRE_BUILD_PLUGIN_EXRCODEC=FALSE
+            - -DOGRE_BUILD_PLUGIN_BSP=FALSE
+            - -DOGRE_BUILD_PLUGIN_PCZ=FALSE
+            - -DOGRE_BUILD_PLUGIN_DOT_SCENE=FALSE
+            - -DOGRE_BUILD_COMPONENT_MESHLODGENERATOR=FALSE
+            - -DOGRE_BUILD_COMPONENT_JAVA=FALSE
+            - -DOGRE_BUILD_COMPONENT_VOLUME=FALSE
+            - -DOGRE_BUILD_COMPONENT_PROPERTY=FALSE
+            - -DOGRE_BUILD_COMPONENT_HLMS=FALSE
+            - -DCMAKE_INSTALL_PREFIX=/usr/
+        source: https://github.com/OGRECave/ogre.git
+        source-tag: v1.12.5
+        source-depth: 1
+        build-packages:
+            - libxaw7-dev
+            - libzzip-dev
+            - libxrandr-dev
+            - libfreetype6-dev
+            - libxt-dev
+            - libgl1-mesa-dev
+            - libglu1-mesa-dev
+            - g++
+        stage-packages:
+            - libfreetype6
+            - libzzip-0-13
+            - libxaw7
+            - libgl1
+            - libxrandr2
+    mygui:
+        plugin: cmake
+        configflags:
+            - -DCMAKE_BUILD_TYPE=Release
+            - -DCMAKE_INSTALL_PREFIX=/usr/
+            - -DCMAKE_CXX_FLAGS=-std=c++11
+            - -DMYGUI_BUILD_DEMOS=FALSE
+            - -DMYGUI_BUILD_TOOLS=FALSE
+            - -DMYGUI_BUILD_PLUGINS=FALSE
+        source: https://github.com/MyGUI/mygui.git
+        source-tag: master
+        source-depth: 1
+        build-packages:
+          - libfreetype6-dev
+        stage-packages:
+          - libfreetype6
+        after: [ogre]
     stuntrally:
         plugin: cmake
         source: https://github.com/paroj/stuntrally.git
-        source-tag: master
+        source-tag: ogre-1.11
         source-depth: 1
         override-pull: |
             snapcraftctl pull
@@ -56,8 +115,6 @@ parts:
             - libvorbisfile3
             - libogg-dev
             - libvorbis-dev
-            - libogre-1.9-dev
-            - libmygui-dev
             - libsdl2-dev
         stage-packages:
             - libboost-wave1.65.1
@@ -71,8 +128,5 @@ parts:
             - libvorbisfile3
             - libogg0
             - libvorbis0a
-            - libogre-1.9.0v5
-            - libmyguiengine3debian1v5
-            - libmygui.ogreplatform0debian1v5
             - libsdl2-2.0-0
-        after: [desktop-glib-only]
+        after: [desktop-glib-only, mygui, ogre]
