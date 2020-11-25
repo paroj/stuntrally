@@ -47,6 +47,7 @@ parts:
             - -DOGRE_BUILD_PLUGIN_BSP=FALSE
             - -DOGRE_BUILD_PLUGIN_PCZ=FALSE
             - -DOGRE_BUILD_PLUGIN_DOT_SCENE=FALSE
+            - -DOGRE_BUILD_PLUGIN_ASSIMP=FALSE
             - -DOGRE_BUILD_COMPONENT_MESHLODGENERATOR=FALSE
             - -DOGRE_BUILD_COMPONENT_JAVA=FALSE
             - -DOGRE_BUILD_COMPONENT_VOLUME=FALSE
@@ -54,7 +55,7 @@ parts:
             - -DOGRE_BUILD_COMPONENT_HLMS=FALSE
             - -DCMAKE_INSTALL_PREFIX=/usr/
         source: https://github.com/OGRECave/ogre.git
-        source-tag: v1.12.5
+        source-tag: master
         source-depth: 1
         build-packages:
             - libxaw7-dev
@@ -81,7 +82,7 @@ parts:
             - -DMYGUI_BUILD_TOOLS=FALSE
             - -DMYGUI_BUILD_PLUGINS=FALSE
         source: https://github.com/MyGUI/mygui.git
-        source-tag: master
+        source-tag: MyGUI3.4.0
         source-depth: 1
         build-packages:
           - libfreetype6-dev
