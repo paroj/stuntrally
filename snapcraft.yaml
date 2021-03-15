@@ -91,13 +91,13 @@ parts:
         after: [ogre]
     stuntrally:
         plugin: cmake
-        source: https://github.com/paroj/stuntrally.git
-        source-tag: ogre-1.11
+        source: https://github.com/stuntrally/stuntrally.git
+        source-tag: master
         source-depth: 1
         override-pull: |
             snapcraftctl pull
-            sed -i -e 's|Icon=stuntrally|Icon=/usr/share/icons/hicolor/64x64/apps/stuntrally.png|g' dist/stuntrally.desktop
-            sed -i -e 's|Icon=sr-editor|Icon=/usr/share/icons/hicolor/64x64/apps/sr-editor.png|g' dist/sr-editor.desktop
+            sed -i -e 's|Icon=stuntrally|Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/stuntrally.png|g' dist/stuntrally.desktop
+            sed -i -e 's|Icon=sr-editor|Icon=${SNAP}/usr/share/icons/hicolor/64x64/apps/sr-editor.png|g' dist/sr-editor.desktop
             cd data
             git clone --depth=1 https://github.com/stuntrally/tracks.git
         configflags:
