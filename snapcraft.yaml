@@ -46,6 +46,7 @@ parts:
             - -DOGRE_BUILD_SAMPLES=FALSE
             - -DOGRE_INSTALL_SAMPLES=FALSE
             - -DOGRE_BUILD_PLUGIN_EXRCODEC=FALSE
+            - -DOGRE_BUILD_PLUGIN_STBI=FALSE
             - -DOGRE_BUILD_PLUGIN_BSP=FALSE
             - -DOGRE_BUILD_PLUGIN_PCZ=FALSE
             - -DOGRE_BUILD_PLUGIN_DOT_SCENE=FALSE
@@ -64,12 +65,14 @@ parts:
             - libxt-dev
             - libgl1-mesa-dev
             - libglu1-mesa-dev
+            - libfreeimage-dev
             - g++
         stage-packages:
             - libfreetype6
             - libgl1
             - libxrandr2
             - libegl1
+            - libfreeimage3
     mygui:
         plugin: cmake
         cmake-parameters:
