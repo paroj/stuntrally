@@ -21,8 +21,8 @@ include(cmake/dependencies-helpers/Boost.cmake)
 if(NOT TARGET OpenAL::OpenAL)
     add_library(OpenAL::OpenAL INTERFACE IMPORTED)
     set_target_properties(OpenAL::OpenAL PROPERTIES
-        INTERFACE_LINK_LIBRARIES "${OPENAL_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${OPENAL_INCLUDE_DIR}"
+        INTERFACE_LINK_LIBRARIES "${OpenAL_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${OpenAL_INCLUDE_DIR}"
     )
 endif()
 
