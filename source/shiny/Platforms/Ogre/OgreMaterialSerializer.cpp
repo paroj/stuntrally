@@ -548,14 +548,8 @@ namespace
     //-----------------------------------------------------------------------
     bool parseNormaliseNormals(String& params, MaterialScriptContext& context)
     {
-        StringUtil::toLowerCase(params);
-        if (params == "on")
-            context.pass->setNormaliseNormals(true);
-        else if (params == "off")
-            context.pass->setNormaliseNormals(false);
-        else
             logParseError(
-            "Bad normalise_normals attribute, valid parameters are 'on' or 'off'.",
+            "Bad normalise_normals attribute.",
             context);
         return false;
     }
