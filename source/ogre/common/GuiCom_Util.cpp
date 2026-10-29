@@ -188,7 +188,7 @@ void CGuiCom::doSizeGUI(EnumeratorWidgetPtr widgets)
 	while (widgets.next())
 	{
 		WP wp = widgets.current();
-		string relativeTo = wp->getUserString("RelativeTo");
+		string relativeTo(wp->getUserString("RelativeTo"));
 
 		if (relativeTo != "")
 		{
@@ -272,7 +272,7 @@ void CGuiCom::setToolTips(EnumeratorWidgetPtr widgets)
 		if (tip)  // if has tooltip string
 		{
 			// needed for translation
-			wp->setUserString("tip", LanguageManager::getInstance().replaceTags(wp->getUserString("tip")));
+			wp->setUserString("tip", TR(wp->getUserString("tip")));
 			wp->setNeedToolTip(true);
 			wp->eventToolTip += newDelegate(this, &CGuiCom::notifyToolTip);
 		}

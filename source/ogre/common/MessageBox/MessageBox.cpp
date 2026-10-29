@@ -31,10 +31,10 @@ namespace MyGUI
 			mLeftOffset2 = mIcon->getRight() + 3;
 		}
 
-		mButtonType = Button::getClassTypeName();
+		mButtonType = std::string(Button::getClassTypeName());
 
 		if (mMainWidget->isUserString("ButtonSkin"))
-			mButtonSkin = mMainWidget->getUserString("ButtonSkin");
+			mButtonSkin = std::string(mMainWidget->getUserString("ButtonSkin"));
 
 		Widget* widget = nullptr;
 		assignWidget(widget, "ButtonPlace", false);

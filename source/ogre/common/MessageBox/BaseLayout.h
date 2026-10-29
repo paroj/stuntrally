@@ -212,13 +212,15 @@ namespace wraps
 			return static_cast<T*>(_createFakeWidgetT(T::getClassTypeName(), _parent));
 		}
 
-		MyGUI::Widget* _createFakeWidgetT(const std::string& _typeName, MyGUI::Widget* _parent)
+		MyGUI::Widget* _createFakeWidgetT(std::string_view _typeName, MyGUI::Widget* _parent)
 		{
+			//  own the string, mygui 3.4 takes const std::string& here, 3.5 std::string_view
+			std::string typeName(_typeName);
 			if (_parent)
-				return _parent->createWidgetT(_typeName,
+				return _parent->createWidgetT(typeName,
 					MyGUI::SkinManager::getInstance().getDefaultSkin(), MyGUI::IntCoord(), MyGUI::Align::Default);
 
-			return MyGUI::Gui::getInstance().createWidgetT(_typeName,
+			return MyGUI::Gui::getInstance().createWidgetT(typeName,
 				MyGUI::SkinManager::getInstance().getDefaultSkin(), MyGUI::IntCoord(), MyGUI::Align::Default, "");
 		}
 

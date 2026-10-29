@@ -69,11 +69,11 @@ namespace MyGUI
 		std::string skinButtonEmpty;
 
 		if (isUserString("SkinButton"))
-			mSkinButton = getUserString("SkinButton");
+			mSkinButton = std::string(getUserString("SkinButton"));
 		if (isUserString("SkinList"))
-			mSkinList = getUserString("SkinList");
+			mSkinList = std::string(getUserString("SkinList"));
 		if (isUserString("SkinSeparator"))
-			mSkinSeparator = getUserString("SkinSeparator");
+			mSkinSeparator = std::string(getUserString("SkinSeparator"));
 		if (isUserString("WidthSeparator"))
 			mWidthSeparator = utility::parseValue<int>(getUserString("WidthSeparator"));
 
@@ -97,7 +97,7 @@ namespace MyGUI
 		if (mWidgetEmpty == nullptr)
 		{
 			if (isUserString("SkinButtonEmpty"))
-				skinButtonEmpty = getUserString("SkinButtonEmpty");
+				skinButtonEmpty = std::string(getUserString("SkinButtonEmpty"));
 			if (!skinButtonEmpty.empty())
 				mWidgetEmpty = mClient->createWidget<Widget>(skinButtonEmpty, IntCoord(0, 0, mClient->getWidth(), getButtonHeight()), Align::Default);
 		}

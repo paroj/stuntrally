@@ -23,8 +23,9 @@ void ResourceImageSetPointerFix::deserialization(MyGUI::xml::ElementPtr _node, M
 	MyGUI::xml::ElementEnumerator info = _node->getElementEnumerator();
 	while (info.next("Property"))
 	{
-		const std::string& key = info->findAttribute("key");
-		const std::string& value = info->findAttribute("value");
+		//  own the strings, mygui 3.4 findAttribute returns const std::string&, 3.5 std::string_view
+		std::string key{info->findAttribute("key")};
+		std::string value{info->findAttribute("value")};
 
 		if (key == "Point")
 			mPoint = MyGUI::IntPoint::parse(value);
