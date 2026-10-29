@@ -29,7 +29,10 @@ public:
 		,mBarMaxSizeX(0.f),mBarSizeY(0.f), oldNumber(-1)
 	{  }
 	virtual ~LoadingBar()
-	{  }
+	{	//  unregister, loading could have been aborted by an exception (finish() not called)
+		if (auto* rgm = Ogre::ResourceGroupManager::getSingletonPtr())
+			rgm->removeResourceGroupListener(this);
+	}
 	BaseApp* pApp;
 
 
