@@ -219,6 +219,10 @@ bool App::frameStart(Real time)
 	if (bWindowResized)
 	{	bWindowResized = false;
 
+		//  rebuild viewports & cameras, once per frame (see BaseApp::windowResized)
+		mSplitMgr->Align();
+		mPlatform->getRenderManagerPtr()->setActiveViewport(mSplitMgr->mNumViewports);
+
 		gcom->ResizeOptWnd();
 		gcom->SizeGUI();
 		gcom->updTrkListDim();

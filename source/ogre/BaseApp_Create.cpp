@@ -642,11 +642,9 @@ void BaseApp::onCursorChange(const std::string &name)
 void BaseApp::windowResized(int x, int y)
 {
 	pSet->windowx = x;  pSet->windowy = y;
+	//  only flag it, the viewport rebuild is done once per frame in Update
+	//  (many resize events can arrive between frames, eg. while dragging the window)
 	bWindowResized = true;
-	
-	// Adjust viewports
-	mSplitMgr->Align();
-	mPlatform->getRenderManagerPtr()->setActiveViewport(mSplitMgr->mNumViewports);
 }
 
 void BaseApp::windowClosed()
